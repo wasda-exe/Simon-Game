@@ -23,7 +23,7 @@ body {
 .left-side-panel {
   position: absolute;
   display: inline-block;
-  top: 35%;
+  top: 32.5%;
   left: 5%;
   /* width: 20px; */
   width: 20%;
@@ -47,6 +47,15 @@ body {
 .start-button {
   background-color: #A7B33C;
   border-radius: 10%;
+}
+.prize-box {
+  margin-top: 10%;
+  visibility: hidden;
+}
+.prize-box a:any-link {
+  color: yellowgreen;
+  text-decoration: none;
+  font-family: 'Press Start 2P', cursive;
 }
 
 .btn {
