@@ -5,13 +5,23 @@ const buttonColors = ['green','red','yellow','blue'];
 let colorSequence = [];
 let userClickedSequence = [];
 
+// START GAME
+// start game via keypress
 $(document).keypress(event => {
     if(level === 0)
     {
         nextSequence()
     }
 });
+// start game via button
+$(".start-button").click(event => {
+    if(level === 0)
+    {
+        nextSequence();
+    }
+})
 
+// PC GENERATES NEXT COLOR SEQUENCE
 function nextSequence() {
     updateLevel();
     // pc chooses color
@@ -23,18 +33,19 @@ function nextSequence() {
     // ui response
     playSound(randomChosenColor);
     $('#'+randomChosenColor).fadeOut(100).fadeIn(100);
-
-
-    // verifySequence();
 }
 
-$(".btn").click(event => {verifySequence(event)});
-
-// called at each button press
-// checks if button press is valid
-function verifySequence(event) {
+// EVENT LISTENERS TO EACH BUTTON
+$(".btn").click(event => {
     if(level === 0)
         return;
+    // called at each button press
+    updateSequence(event);
+    checkCurrentClicked(event);
+});
+
+// update user clicked sequence
+function updateSequence(event) {
     // user chooses color
     let userClickedColor = event.target.id;
 
@@ -43,20 +54,23 @@ function verifySequence(event) {
     // ui response
     playSound(userClickedColor);
     animatePress(userClickedColor);
+
     // // testing
     // console.log(userClickedSequence);
     // console.log(colorSequence);
     // // console.log(counter);
     // console.log(colorSequence.length);
     // console.log(userClickedSequence.length);
+}
 
-    // logic
+// checks if button press is valid
+function checkCurrentClicked(event) {
     // indicate checking current button
     counter++;
     // still checking current sequence
     if(counter < colorSequence.length)
     {
-        // console.log(counter);
+        // user gets sequence so far correct
         if(colorSequence[counter]===userClickedSequence[counter])
         {
             // success on final check of color sequence
@@ -71,6 +85,7 @@ function verifySequence(event) {
                 }, 750);
             }
         }
+        // user makes a mistake in sequence
         else
         {
             userClickedSequence.length = 0;
@@ -80,9 +95,33 @@ function verifySequence(event) {
     }
 }
 
+function showCorrectSequence() {
+    $("#correct-sequence").animate({opacity:1}, 100);
+
+    // timer between each press
+    colorSequence.forEach((ele, index) => {
+        setTimeout(() => {
+            playSound(ele);
+            animatePress(ele);
+        }, 500 * (index + 1));
+    });
+
+    // delay before correct sequence statement is removed
+    setTimeout(() => {
+    $("#correct-sequence").animate({opacity:0}, 100);
+    }, 2000);
+}
 function gameOver() {
     $("#level-title").text('Game Over. Press any key to restart.');
-    colorSequence.length = 0;
+    
+    // show user what the correct sequence was
+    // timer before sequence shown
+    setTimeout(() => {
+        showCorrectSequence();
+
+        // reset pc color sequence
+        colorSequence.length = 0;
+    }, 600);
 
     // update max score
     // reset level
@@ -93,7 +132,7 @@ function gameOver() {
     }
     level = 0;
 
-    // background flash
+    // background flash to indicate game over
     $("body").css('background-color', 'red')
     setTimeout(() => {
         $("body").css('background-color', '#3E4A3D');
@@ -116,14 +155,3 @@ function updateLevel() {
     level++;
     $('#level-title').text('Level '+level);
 }
-
-function pattern() {
-    arr.push(randNum);
-    $(val.randNum).click();
-}
-
-
-// $("#red").click(event => {
-//     let audio = new Audio("sounds/red.mp3");
-//     audio.play();
-// })
